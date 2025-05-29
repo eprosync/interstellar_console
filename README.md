@@ -12,5 +12,10 @@
 
 </div>
 
-This is an example of how I implement interstellar into an internal application like a console app.
-This pulls from LuaJIT's repository on stable tag v2.1.0-beta3
+This is an example of how I implement interstellar into an internal application like a console app.\
+This pulls from LuaJIT's repository on stable tag v2.1.0-beta3, you can change the version but be warned as it may not build properly.
+
+---
+
+For windows make sure you have `vswhere.exe` in the repository directory.\
+As its required for detecting your visual studio build tools for LuaJIT to build.
