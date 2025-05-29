@@ -27,13 +27,13 @@ project "Interstellar"
     filter { "system:linux", "platforms:x86" }
         links { "luajit/src/luajit" }
         prebuildcommands {
-            "cd ../luajit/src && make clean && make CCOPTS='-m32' amalg"
+            "cd ../luajit/src && make clean && make CC=\"gcc -m32\" BUILDMODE=static LUAJIT_ENABLE_LUA52=0 BUILD_SHARED_LIBS=OFF"
         }
 
     filter { "system:linux", "platforms:x64" }
         links { "luajit/src/luajit" }
         prebuildcommands {
-            "cd ../luajit/src && make clean && make CCOPTS='-m64' amalg"
+            "cd ../luajit/src && make clean && make CC=\"gcc -m64\" XCFLAGS=\"-DLUAJIT_ENABLE_GC64\" BUILDMODE=static LUAJIT_ENABLE_LUA52=0 BUILD_SHARED_LIBS=OFF"
         }
 
     filter { "system:windows", "platforms:x64" }
