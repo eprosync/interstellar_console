@@ -1,4 +1,4 @@
-#include <iostream>
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -36,7 +36,7 @@ extern "C" {
             return 0;
         }
 
-        Interstellar::FS::api();
+        Interstellar::FS::api(Interstellar::FS::pwd());
         Interstellar::Memory::api();
         Interstellar::LXZ::api();
         Interstellar::IOT::api();
