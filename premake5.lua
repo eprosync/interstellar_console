@@ -105,8 +105,8 @@ project "Interstellar"
     
         filter { "system:linux", "platforms:aarch64" }
             pic "On"
-            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/aarch64-linux/include" }
-            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/aarch64-linux/lib" }
+            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm64-linux/include" }
+            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm64-linux/lib" }
             targetname ("interstellar")
             targetprefix ""
 
