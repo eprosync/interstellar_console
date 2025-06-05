@@ -1,6 +1,6 @@
 workspace "Interstellar"
     configurations { "Debug", "Release" }
-    platforms { "x86", "x64" }
+    platforms { "x86", "x64", "arm", "aarch64" }
     location "build"
 
 local handle = io.popen("vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath")
@@ -24,6 +24,18 @@ project "Interstellar"
     files { "entry_point.cpp", "**.cpp", "**.hpp", "**.h", "**.lib" }
     includedirs { ".", "luajit/src" }
 
+    filter { "system:linux", "platforms:arm" }
+        links { "luajit/src/luajit" }
+        prebuildcommands {
+            "cd ../luajit/src && make clean && make CC=\"gcc\" BUILDMODE=static LUAJIT_ENABLE_LUA52=0 BUILD_SHARED_LIBS=OFF"
+        }
+
+    filter { "system:linux", "platforms:aarch64" }
+        links { "luajit/src/luajit" }
+        prebuildcommands {
+            "cd ../luajit/src && make clean && make CC=\"gcc\" XCFLAGS=\"-DLUAJIT_ENABLE_GC64\" BUILDMODE=static LUAJIT_ENABLE_LUA52=0 BUILD_SHARED_LIBS=OFF"
+        }
+
     filter { "system:linux", "platforms:x86" }
         links { "luajit/src/luajit" }
         prebuildcommands {
@@ -36,10 +48,16 @@ project "Interstellar"
             "cd ../luajit/src && make clean && make CC=\"gcc -m64\" XCFLAGS=\"-DLUAJIT_ENABLE_GC64\" BUILDMODE=static LUAJIT_ENABLE_LUA52=0 BUILD_SHARED_LIBS=OFF"
         }
 
-    filter { "system:windows", "platforms:x64" }
+    filter { "system:windows", "platforms:arm" }
         links { "luajit/src/lua51" }
         prebuildcommands {
             [[cmd /C "call "]] .. vsc64 .. [[" && cd ..\luajit\src && msvcbuild.bat static x86 )"]]
+        }
+
+    filter { "system:windows", "platforms:aarch64" }
+        links { "luajit/src/lua51" }
+        prebuildcommands {
+            [[cmd /C "call "]] .. vsc32 .. [[" && cd ..\luajit\src && msvcbuild.bat static x64 )"]]
         }
 
     filter { "system:windows", "platforms:x86" }
@@ -48,11 +66,23 @@ project "Interstellar"
             [[cmd /C "call "]] .. vsc32 .. [[" && cd ..\luajit\src && msvcbuild.bat static x86 )"]]
         }
 
+    filter { "system:windows", "platforms:x64" }
+        links { "luajit/src/lua51" }
+        prebuildcommands {
+            [[cmd /C "call "]] .. vsc64 .. [[" && cd ..\luajit\src && msvcbuild.bat static x64 )"]]
+        }
+
     filter "system:windows"
         systemversion "latest"
         flags { "MultiProcessorCompile" }
         runtime "Release"
         buildoptions { "/MT" }
+
+        filter { "system:windows", "platforms:arm" }
+            targetname ("interstellar")
+
+        filter { "system:windows", "platforms:aarch64" }
+            targetname ("interstellar")
 
         filter { "system:windows", "platforms:x86" }
             targetname ("interstellar")
@@ -66,6 +96,19 @@ project "Interstellar"
             "ixwebsocket", "sodium", "cpprest", "llhttp", "cpr", "curl",
             "ssl", "crypto", "zstd", "lzma", "bz2", "z", "fmt", "pthread"
         }
+
+        filter { "system:linux", "platforms:arm" }
+            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm-linux/include" }
+            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm-linux/lib" }
+            targetname ("interstellar")
+            targetprefix ""
+    
+        filter { "system:linux", "platforms:aarch64" }
+            pic "On"
+            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/aarch64-linux/include" }
+            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/aarch64-linux/lib" }
+            targetname ("interstellar")
+            targetprefix ""
 
         filter { "system:linux", "platforms:x86" }
             includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/x86-linux/include" }
@@ -85,6 +128,12 @@ project "Interstellar"
 
     filter "platforms:x64"
         architecture "x86_64"
+
+    filter "platforms:arm"
+        architecture "arm"
+
+    filter "platforms:aarch64"
+        architecture "aarch64"
 
     filter "configurations:Debug"
         defines { "DEBUG" }

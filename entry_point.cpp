@@ -83,6 +83,10 @@ extern "C" {
                 std::cout << "x64 ";
         #elif defined(__i386__) || defined(_M_IX86)
                 std::cout << "x86 ";
+        #elif defined(__arm__)
+                std::cout << "ARM ";
+        #elif defined(__aarch64__)
+                std::cout << "AARCH64 ";
         #endif
 
         std::cout << "- " __TIME__ " " __DATE__ << " - " << LUAJIT_VERSION << std::endl;
