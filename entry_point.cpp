@@ -135,6 +135,23 @@ extern "C" {
             }
         }
 
+        {
+            std::string filename = "init.lua";
+            std::ifstream file(filename);
+            if (file) {
+                std::string line;
+                std::stringstream data;
+                while (std::getline(file, line)) {
+                    data << line << std::endl;
+                }
+
+                std::string err = Interstellar::Reflection::execute(L, data.str(), "@" + filename);
+                if (err.size() > 0) {
+                    std::cout << "ERROR - " << err << std::endl;
+                }
+            }
+        }
+
         mtx = std::make_unique<std::mutex>();
 
         std::thread([]() {
