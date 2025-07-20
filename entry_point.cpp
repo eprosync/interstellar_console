@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 #include <mutex>
-
+#include <chrono>
 
 #ifdef _WIN32
     #define EXPORT __declspec(dllexport)
@@ -170,11 +170,13 @@ extern "C" {
         }).detach();
 
         while (true) {
+            auto tick_start = std::chrono::steady_clock::now();
+
             Interstellar::runtime();
 
             std::unique_lock<std::mutex> guard(*mtx);
             auto& queue = get_queue();
-            if (queue.size() > 0) {
+            if (!queue.empty()) {
                 for (auto input : queue) {
                     if (input == "exit" || input == "quit") {
                         Interstellar::Reflection::close(L);
@@ -186,15 +188,20 @@ extern "C" {
 
                     guard.unlock();
                     std::string err = Interstellar::Reflection::execute(L, input, "@internal");
-                    if (err.size() > 0) {
+                    if (!err.empty()) {
                         std::cout << "ERROR - " << err << std::endl;
                     }
                     guard.lock();
                 }
             }
             guard.unlock();
-        }
 
-        return 0;
-    }
+            auto tick_end = std::chrono::steady_clock::now();
+            auto tick_duration = std::chrono::duration_cast<std::chrono::milliseconds>(tick_end - tick_start);
+            constexpr std::chrono::milliseconds tickrate(16); // ~60 FPS
+
+            if (tick_duration < tickrate) {
+                std::this_thread::sleep_for(tickrate - tick_duration);
+            }
+        }
 }
