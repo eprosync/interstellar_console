@@ -48,27 +48,27 @@ extern "C" {
             Signal::add_error("entry_point", [](API::lua_State* L, std::string name, std::string identity, std::string error) {
                 std::string state_name = Tracker::get_name(L);
                 std::cout << "[" << state_name << "] [signal." << name << "." << identity << "] " << error << std::endl;
-            });
+                });
 
             Reflection::Task::add_error("entry_point", [](API::lua_State* L, std::string error) {
                 std::string state_name = Tracker::get_name(L);
                 std::cout << "[" << state_name << "] [task] " << error << std::endl;
-            });
+                });
 
             FS::add_error("entry_point", [](API::lua_State* L, std::string error) {
                 std::string state_name = Tracker::get_name(L);
                 std::cout << "[" << state_name << "] [fs] " << error << std::endl;
-            });
+                });
 
             LXZ::add_error("entry_point", [](API::lua_State* L, std::string error) {
                 std::string state_name = Tracker::get_name(L);
                 std::cout << "[" << state_name << "] [lxz] " << error << std::endl;
-            });
+                });
 
             IOT::add_error("entry_point", [](API::lua_State* L, std::string type, std::string error) {
                 std::string state_name = Tracker::get_name(L);
                 std::cout << "[" << state_name << "] [iot." << type << "] " << error << std::endl;
-            });
+                });
         }
 
         std::cout << "Interstellar - ";
@@ -167,7 +167,7 @@ extern "C" {
                     break;
                 }
             }
-        }).detach();
+            }).detach();
 
         while (true) {
             auto tick_start = std::chrono::steady_clock::now();
@@ -204,4 +204,5 @@ extern "C" {
                 std::this_thread::sleep_for(tickrate - tick_duration);
             }
         }
+    }
 }
