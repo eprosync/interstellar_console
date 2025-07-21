@@ -93,11 +93,12 @@ extern "C" {
         std::cout << "Ctrl+C or 'exit' or 'quit' to escape this program." << std::endl;
 
         auto L = Interstellar::Reflection::open("main", true, false);
+        static std::chrono::milliseconds tickrate(16);
 
         for (int i = 1; i < argc; ++i) {
             std::string arg = argv[i];
 
-            if (arg == "-f" && i + 1 < argc) {
+            if ((arg == "--file" || arg == "-f") && i + 1 < argc) {
                 std::string filename = argv[++i];
                 std::ifstream file(filename);
                 if (!file) {
@@ -118,7 +119,7 @@ extern "C" {
 
                 break;
             }
-            else if (arg == "-e" && i + 1 < argc) {
+            else if ((arg == "--exec" || arg == "-e") && i + 1 < argc) {
                 std::stringstream s;
                 for (++i; i < argc; ++i) {
                     s << argv[i];
@@ -132,6 +133,29 @@ extern "C" {
                 }
 
                 break;
+            }
+            else if ((arg == "--rate" || arg == "-r") && i + 1 < argc) {
+                std::string rateStr = argv[++i];
+                int value = 0;
+                std::string unit;
+
+                size_t pos = 0;
+                while (pos < rateStr.size() && isdigit(rateStr[pos])) ++pos;
+                if (pos > 0) {
+                    value = std::stoi(rateStr.substr(0, pos));
+                    unit = rateStr.substr(pos);
+                }
+
+                if (unit == "ms") {
+                    value = std::clamp(value, 1, 500);
+                    tickrate = std::chrono::milliseconds(value);
+                }
+                else {
+                    if (value <= 0) value = 60;
+                    int ms = static_cast<int>(1000.0 / value);
+                    ms = std::clamp(ms, 1, 500);
+                    tickrate = std::chrono::milliseconds(ms);
+                }
             }
         }
 
@@ -198,7 +222,6 @@ extern "C" {
 
             auto tick_end = std::chrono::steady_clock::now();
             auto tick_duration = std::chrono::duration_cast<std::chrono::milliseconds>(tick_end - tick_start);
-            constexpr std::chrono::milliseconds tickrate(16); // ~60 FPS
 
             if (tick_duration < tickrate) {
                 std::this_thread::sleep_for(tickrate - tick_duration);
