@@ -75,7 +75,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: debug_x64_linux
-          path: repository/bin/x64/Debug/interstellar
+          path: repository/bin/x64/Debug/*
           if-no-files-found: warn
 
   build-release:
@@ -147,5 +147,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release_x64_linux
-          path: repository/bin/x64/Release/interstellar
+          path: repository/bin/x64/Release/*
           if-no-files-found: warn

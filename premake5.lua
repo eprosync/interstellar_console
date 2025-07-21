@@ -12,7 +12,7 @@ if vsc then
     vsc64 = (vsc:sub(0, -2) .. "\\VC\\Auxiliary\\Build\\vcvars64.bat"):gsub('%W\\:','')
 else vsc = "" end
 
-local vcpkg_root = os.getenv("VCPKG_ROOT") or "../../vcpkg"
+local vcpkg_root = os.getenv("VCPKG_ROOT") or "../vcpkg"
 local function vcpkg_path(triplet, kind)
     return path.join(vcpkg_root, "installed", triplet, kind)
 end
