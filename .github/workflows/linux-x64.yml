@@ -26,9 +26,6 @@ jobs:
           git submodule sync --recursive
           git submodule update --init --force --recursive
 
-      - name: Install sudo (Debian)
-        run: apt-get update && apt-get install -y sudo
-
       - name: Install packages
         run: |
           sudo dpkg --add-architecture i386
@@ -100,9 +97,6 @@ jobs:
           git submodule foreach --recursive git clean -fdx
           git submodule sync --recursive
           git submodule update --init --force --recursive
-
-      - name: Install sudo (Debian)
-        run: apt-get update && apt-get install -y sudo
 
       - name: Install packages
         run: |
