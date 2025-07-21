@@ -12,6 +12,11 @@ if vsc then
     vsc64 = (vsc:sub(0, -2) .. "\\VC\\Auxiliary\\Build\\vcvars64.bat"):gsub('%W\\:','')
 else vsc = "" end
 
+local vcpkg_root = os.getenv("VCPKG_ROOT") or "../../vcpkg"
+local function vcpkg_path(triplet, kind)
+    return path.join(vcpkg_root, "installed", triplet, kind)
+end
+
 project "Interstellar"
     kind "ConsoleApp"
     language "C++"
@@ -96,32 +101,26 @@ project "Interstellar"
             "ixwebsocket", "sodium", "cpprest", "llhttp", "cpr", "curl",
             "ssl", "crypto", "zstd", "lzma", "bz2", "z", "fmt", "pthread"
         }
+        targetprefix ""
+        targetname "interstellar"
 
         filter { "system:linux", "platforms:arm" }
-            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm-linux/include" }
-            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm-linux/lib" }
-            targetname ("interstellar")
-            targetprefix ""
-    
+            includedirs { vcpkg_path("arm-linux", "include") }
+            libdirs { vcpkg_path("arm-linux", "lib") }
+
         filter { "system:linux", "platforms:aarch64" }
             pic "On"
-            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm64-linux/include" }
-            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/arm64-linux/lib" }
-            targetname ("interstellar")
-            targetprefix ""
+            includedirs { vcpkg_path("arm64-linux", "include") }
+            libdirs { vcpkg_path("arm64-linux", "lib") }
 
         filter { "system:linux", "platforms:x86" }
-            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/x86-linux/include" }
-            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/x86-linux/lib" }
-            targetname ("interstellar")
-            targetprefix ""
+            includedirs { vcpkg_path("x86-linux", "include") }
+            libdirs { vcpkg_path("x86-linux", "lib") }
 
         filter { "system:linux", "platforms:x64" }
             pic "On"
-            includedirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/x64-linux/include" }
-            libdirs { (os.getenv("HOME") or "") .. "/vcpkg/installed/x64-linux/lib" }
-            targetname ("interstellar")
-            targetprefix ""
+            includedirs { vcpkg_path("x64-linux", "include") }
+            libdirs { vcpkg_path("x64-linux", "lib") }
 
     filter "platforms:x86"
         architecture "x86"
