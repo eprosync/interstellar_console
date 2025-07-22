@@ -82,6 +82,7 @@ project "Interstellar"
         flags { "MultiProcessorCompile" }
         runtime "Release"
         buildoptions { "/MT" }
+        files { "resources.rc", "icon.ico" }
 
         filter { "system:windows", "platforms:arm" }
             targetname ("interstellar")
