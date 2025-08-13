@@ -13,6 +13,16 @@
 
 #include "interstellar/interstellar.hpp"
 #include "interstellar/interstellar_signal.hpp"
+
+#include "interstellar/interstellar_bit.hpp"
+#include "interstellar/interstellar_coroutine.hpp"
+#include "interstellar/interstellar_debug.hpp"
+#include "interstellar/interstellar_math.hpp"
+#include "interstellar/interstellar_os.hpp"
+#include "interstellar/interstellar_string.hpp"
+#include "interstellar/interstellar_table.hpp"
+#include "interstellar/interstellar_buffer.hpp"
+
 #include "interstellar/interstellar_fs.hpp"
 #include "interstellar/interstellar_memory.hpp"
 #include "interstellar/interstellar_lxz.hpp"
@@ -36,8 +46,23 @@ extern "C" {
             return 0;
         }
 
+        // Core
+        Interstellar::Reflection::api();
+        Interstellar::Signal::api();
+        Interstellar::Coroutine::api();
+        Interstellar::Buffer::api();
+        Interstellar::String::api();
+        Interstellar::Debug::api();
+        Interstellar::Table::api();
+        Interstellar::Math::api();
+        Interstellar::OS::api();
+
+        // Extensions
         Interstellar::FS::api(Interstellar::FS::pwd());
-        Interstellar::Memory::api();
+        if (Interstellar::OS::ARGV::exists("memory")) {
+            Interstellar::Memory::api();
+            std::cout << "[WARNING] Interstellar has memory.* enabled, you have been warned." << std::endl;
+        }
         Interstellar::LXZ::api();
         Interstellar::IOT::api();
         Interstellar::Sodium::api();
